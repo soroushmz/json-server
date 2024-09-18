@@ -40,16 +40,11 @@ app.post("/", async (req, res) => {
   // Parse the incoming JSON data.
   const data = req.body;
   console.log(data);
-  fs.writeFile(
-    "root/works/logged-data/" + data.sessionId,
-    JSON.stringify(data),
-    function (err) {
-      if (err) {
-        return console.log(err);
-      }
-      console.log("The file was saved!");
-    }
+  var writeStream = fs.createWriteStream(
+    "root/works/logged-data/" + data.sessionId
   );
+  writeStream.write(JSON.stringify(data));
+  writeStream.end();
   // Send data to the queue
   channel.sendToQueue(QUEUE_NAME, Buffer.from(JSON.stringify(data)));
 
