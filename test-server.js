@@ -27,6 +27,16 @@ app.use(express.json({ limit: "50mb" }));
 
 let channel;
 
+async function writeToFile(data) {
+  try {
+    await fs.writeFile("/root/works/logged-data/" + data.sessionId, JSON.stringify(data));
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+example();
+
 // Connect to RabbitMQ server and create a channel
 amqp.connect(RABBITMQ_SERVER, function (error0, connection) {
   if (error0) throw error0;
@@ -39,12 +49,8 @@ amqp.connect(RABBITMQ_SERVER, function (error0, connection) {
 app.post("/", async (req, res) => {
   // Parse the incoming JSON data.
   const data = req.body;
-  console.log(data);
-  var writeStream = fs.createWriteStream(
-    "/root/works/logged-data/" + data.sessionId
-  );
-  writeStream.write(JSON.stringify(data));
-  writeStream.end();
+  console.log(data.sessionID);
+  writeToFile(data)
   // Send data to the queue
   channel.sendToQueue(QUEUE_NAME, Buffer.from(JSON.stringify(data)));
 
