@@ -29,7 +29,7 @@ let channel;
 
 async function writeToFile(data) {
   try {
-    await fs.writeFile("/root/works/logged-data/" + data.sessionId, JSON.stringify(data));
+    await fs.writeFile("/root/works/logged-data/" + data.sessionId + ".txt", JSON.stringify(data));
   } catch (err) {
     console.log(err);
   }
