@@ -47,7 +47,7 @@ amqp.connect(RABBITMQ_SERVER, function (error0, connection) {
 app.post("/", async (req, res) => {
   // Parse the incoming JSON data.
   const data = req.body;
-  console.log(data.sessionId);
+  console.log(data);
   writeToFile(data)
   // Send data to the queue
   channel.sendToQueue(QUEUE_NAME, Buffer.from(JSON.stringify(data)));
