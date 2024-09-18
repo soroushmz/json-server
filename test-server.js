@@ -14,41 +14,46 @@
  * limitations under the License.
  **/
 
+const os = require("os");
+const express = require("express");
+const amqp = require("amqplib/callback_api");
+const fs = require("fs");
 
-
-const os = require('os');
-const express = require('express');
-const amqp = require('amqplib/callback_api');
-
-const RABBITMQ_SERVER = 'amqp://localhost';
-const QUEUE_NAME = 'json_data_queue';
+const RABBITMQ_SERVER = "amqp://localhost";
+const QUEUE_NAME = "json_data_queue";
 
 const app = express();
-app.use(express.json({ limit: '50mb' }));
+app.use(express.json({ limit: "50mb" }));
 
 let channel;
 
-    // Connect to RabbitMQ server and create a channel
-    amqp.connect(RABBITMQ_SERVER, function(error0, connection) {
-        if (error0) throw error0;
-        connection.createChannel(function(error1, ch) {
-            if (error1) throw error1;
-            channel = ch;
-        });
-    });
+// Connect to RabbitMQ server and create a channel
+amqp.connect(RABBITMQ_SERVER, function (error0, connection) {
+  if (error0) throw error0;
+  connection.createChannel(function (error1, ch) {
+    if (error1) throw error1;
+    channel = ch;
+  });
+});
 
-    app.post('/', async (req, res) => {
-        // Parse the incoming JSON data.
-        const data = req.body;
+app.post("/", async (req, res) => {
+  // Parse the incoming JSON data.
+  const data = req.body;
+  console.log(data);
+  fs.writeFile("~/works/logged-data", data.sessionId, function (err) {
+    if (err) {
+      return console.log(err);
+    }
+    console.log("The file was saved!");
+  });
+  // Send data to the queue
+  channel.sendToQueue(QUEUE_NAME, Buffer.from(JSON.stringify(data)));
 
-        // Send data to the queue
-        channel.sendToQueue(QUEUE_NAME, Buffer.from(JSON.stringify(data)));
+  res.status(200).send("Data received successfully");
+});
 
-        res.status(200).send('Data received successfully');
-    });
-
-    app.listen(8484, () => {
-        console.log(`Test Server is running on port 8484 is listening...`);
-    });
+app.listen(8484, () => {
+  console.log(`Test Server is running on port 8484 is listening...`);
+});
 
 // Does not use cluster library
