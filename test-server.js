@@ -41,7 +41,7 @@ app.post("/", async (req, res) => {
   const data = req.body;
   console.log(data);
   var writeStream = fs.createWriteStream(
-    "root/works/logged-data/" + data.sessionId
+    "/root/works/logged-data/" + data.sessionId
   );
   writeStream.write(JSON.stringify(data));
   writeStream.end();
