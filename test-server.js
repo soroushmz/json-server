@@ -17,7 +17,7 @@
 const os = require("os");
 const express = require("express");
 const amqp = require("amqplib/callback_api");
-const fs = require("fs");
+const fs = require("node:fs/promises");
 
 const RABBITMQ_SERVER = "amqp://localhost";
 const QUEUE_NAME = "json_data_queue";
