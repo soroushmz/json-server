@@ -35,8 +35,6 @@ async function writeToFile(data) {
   }
 }
 
-example();
-
 // Connect to RabbitMQ server and create a channel
 amqp.connect(RABBITMQ_SERVER, function (error0, connection) {
   if (error0) throw error0;
